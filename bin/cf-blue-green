@@ -33,7 +33,7 @@ on_fail () {
 
 # pull the up-to-date manifest from the BLUE (existing) application
 MANIFEST=$(mktemp -t "${BLUE}_manifest.XXXXXXXXXX")
-cf create-app-manifest $BLUE -p $MANIFEST
+bx cf create-app-manifest $BLUE -p $MANIFEST
 
 # set up try/catch
 # http://stackoverflow.com/a/185900/358804
@@ -42,7 +42,7 @@ trap on_fail ERR
 DOMAIN=${B_DOMAIN:-$(cat $MANIFEST | grep domain: | awk '{print $2}')}
 
 # create the GREEN application
-cf push $GREEN -f $MANIFEST -n $GREEN
+bx cf push $GREEN -f $MANIFEST -n $GREEN
 
 # wait for the apps to start
 sleep ${CF_SLEEP:-5} # Waits 5 seconds.
@@ -52,13 +52,13 @@ curl --fail -I "https://${GREEN}.${DOMAIN}"
 
 # add the GREEN application to each BLUE route to be load-balanced
 # TODO this output parsing seems a bit fragile...find a way to use more structured output
-cf routes | tail -n +4 | grep $BLUE | awk '{print $3" -n "$2}' | xargs -n 3 cf map-route $GREEN
+bx cf routes | tail -n +4 | grep $BLUE | awk '{print $3" -n "$2}' | xargs -n 3 cf map-route $GREEN
 
 # cleanup
 # TODO consider 'stop'-ing the BLUE instead of deleting it, so that depedencies are cached for next time
-cf delete $BLUE -f
-cf rename $GREEN $BLUE
-cf delete-route $DOMAIN -n $GREEN -f
+bx cf delete $BLUE -f
+bx cf rename $GREEN $BLUE
+bx cf delete-route $DOMAIN -n $GREEN -f
 finally
 
 echo "DONE"
