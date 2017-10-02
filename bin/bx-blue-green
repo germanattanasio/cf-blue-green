@@ -39,7 +39,7 @@ bx cf create-app-manifest $BLUE -p $MANIFEST
 # http://stackoverflow.com/a/185900/358804
 trap on_fail ERR
 
-DOMAIN=${B_DOMAIN:-$(cat $MANIFEST | grep domain: | awk '{print $2}')}
+DOMAIN="mybluemix.net"
 
 # create the GREEN application
 bx cf push $GREEN -f $MANIFEST -n $GREEN
