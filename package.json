@@ -1,23 +1,25 @@
 {
-  "name": "cf-blue-green",
-  "version": "0.2.2",
-  "description": "zero-downtime deployment for Cloud Foundry applications",
+  "name": "bx-blue-green",
+  "version": "0.0.1",
+  "description": "zero-downtime deployment for Cloud Foundry based applications on bluemix",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/18F/cf-blue-green.git"
+    "url": "git+https://github.com/andresfvilla/bx-blue-green.git"
   },
   "keywords": [
+    "bluemix",
+    "api key",
     "cloud foundry",
     "blue-green",
     "zero-downtime",
     "deploy"
   ],
-  "author": "Aidan Feldman <aidan.feldman@gsa.gov>",
+  "author": "Andres Villa <andres.villa@ibm.com",
   "license": "CC0-1.0",
   "bugs": {
-    "url": "https://github.com/18F/cf-blue-green/issues"
+    "url": "https://github.com/andresfvilla/bx-blue-green/issues"
   },
-  "homepage": "https://github.com/18F/cf-blue-green#readme",
+  "homepage": "https://github.com/andresfvilla/bx-blue-green#readme",
   "bin": {
     "bx-blue-green": "./bin/bx-blue-green",
     "bx-blue-green-travis": "./bin/bx-blue-green-travis"
