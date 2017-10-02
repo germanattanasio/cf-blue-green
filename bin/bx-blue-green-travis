@@ -6,10 +6,11 @@ set -e
 # This is the source file after following the redirect
 curl -fsSL https://clis.ng.bluemix.net/install/linux | sh
  
-bx login
 echo $BX_API
 echo "Printed bluemix API"
 bx api $BX_API
+
+bx login
 
 echo "Bluemix API set"
 
