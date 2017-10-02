@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/18F/cf-blue-green#readme",
   "bin": {
-    "cf-blue-green": "./bin/cf-blue-green",
-    "cf-blue-green-travis": "./bin/cf-blue-green-travis"
+    "bx-blue-green": "./bin/bx-blue-green",
+    "bx-blue-green-travis": "./bin/bx-blue-green-travis"
   }
 }
