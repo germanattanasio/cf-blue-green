@@ -12,6 +12,8 @@ bx api $BX_API
 
 bx login
 
+bx target -o $BX_ORGANIZATION -s $BX_SPACE
+
 echo "Bluemix API set"
 
 
