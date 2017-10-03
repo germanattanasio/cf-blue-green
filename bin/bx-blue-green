@@ -40,7 +40,7 @@ bx cf create-app-manifest $BLUE -p $MANIFEST
 trap on_fail ERR
 
 #Domain does not 
-DOMAIN=var=${DEPLOY_ENV:-"mybluemix.net"}
+DOMAIN=${DEPLOY_ENV:-"mybluemix.net"}
 
 # create the GREEN application
 bx cf push $GREEN -f $MANIFEST -n $GREEN
