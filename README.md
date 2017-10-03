@@ -2,11 +2,13 @@
 
 Allows zero-downtime deployments of applications within Bluemix, with no additional setup needed.
 
-This repo is heavily based off of [cf-blue-green](https://github.com/germanattanasio/cf-blue-green)
+This repo is heavily based off of [cf-blue-green](https://github.com/18F/cf-blue-green)
 
 # When to use bx-blue-green instead of cf-blue-green
 
-This project uses the bluemix command line directly allowing it to leverage some of the new features added to bluemix
+This project uses the bluemix command line directly allowing it to leverage some of the new features added to bluemix.
+
+The Bluemic CLI adds extra functionality to Cloud Foundry command line, if you are deploying onto bluemix, it is best to migrate over to the 
 
 ## Bluemix API key
 
@@ -23,7 +25,7 @@ Once the key is created, you may create an environment variable with the key `BL
 ## Usage
 
 1. [Install the `bx` CLI](https://github.com/cloudfoundry/cli/releases) **v0.6.0+**.
-1. Run `npm install -g bx-blue-green`.
+1. Run `npm install -g https://github.com/andresfvilla/bx-blue-green`.
     * See [Notes](#manual-installation) below for non-Node installation.
 1. Run `bx-blue-green <appname>` (instead of `bx cf push`) from your application directory to deploy.
 
@@ -92,8 +94,3 @@ More information about blue-green deployment, all of which this script drew from
 * http://martinfowler.com/bliki/BlueGreenDeployment.html
 * http://docs.pivotal.io/pivotalcf/devguide/deploy-apps/blue-green.html
 * https://github.com/dlapiduz/step-cloud-foundry-deploy/blob/master/run.sh
-
-## Alternatives for Blue/Green Deploys in Cloud Foundry
-
-* [Autopilot](https://github.com/contraband/autopilot): Autopilot is a CloudFoundry Go plugin that provides a subcommand, `zero-downtime-push` for hands-off, zero-downtime application deploys.
-* [BlueGreenDeploy](https://github.com/bluemixgaragelondon/cf-blue-green-deploy): cf-blue-green-deploy is a plugin, written in Go, for the CF command line tool that automates a few steps involved in zero-downtime deploys.
