@@ -1,8 +1,8 @@
-***Note: if your application's manifest is "complete", use [Autopilot](https://github.com/concourse/autopilot) instead. More info [below](#manifests), in [the Autopilot README](https://github.com/concourse/autopilot#warning), and in [this Issue](https://github.com/concourse/autopilot/issues/11).***
-
 # Blue-green deployments for Cloud Foundry based Bluemix apps
 
 Allows zero-downtime deployments of applications within Bluemix, with no additional setup needed.
+
+This repo is heavily based off of [cf-blue-green](https://github.com/germanattanasio/cf-blue-green)
 
 # When to use bx-blue-green instead of cf-blue-green
 
@@ -22,7 +22,7 @@ Once the key is created, you may create an environment variable with the key `BL
 
 ## Usage
 
-1. [Install the `bx` CLI](https://github.com/cloudfoundry/cli/releases) **v6.12.4+**.
+1. [Install the `bx` CLI](https://github.com/cloudfoundry/cli/releases) **v0.6.0+**.
 1. Run `npm install -g bx-blue-green`.
     * See [Notes](#manual-installation) below for non-Node installation.
 1. Run `bx-blue-green <appname>` (instead of `bx cf push`) from your application directory to deploy.
