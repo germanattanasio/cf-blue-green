@@ -8,7 +8,11 @@ This repo is heavily based off of [cf-blue-green](https://github.com/18F/cf-blue
 
 This project uses the bluemix command line directly allowing it to leverage some of the new features added to bluemix.
 
-The Bluemic CLI adds extra functionality to Cloud Foundry command line, if you are deploying onto bluemix, it is best to migrate over to the 
+The Bluemic CLI adds extra functionality to Cloud Foundry command line, if you are deploying onto Bluemix, it is best to migrate over to the Bluemix CLI as it will contain the latest functionality for Bluemix related deployments.
+
+One notable feature that is now part of the Bluemix CLI is the ability to create an API key in order to avoid having to use a One-time login token. 
+
+For steps on creating a Bluemix API key [click here](#bluemix-api-key)
 
 ## Bluemix API key
 
