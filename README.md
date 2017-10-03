@@ -4,6 +4,22 @@
 
 Allows zero-downtime deployments of applications within Bluemix, with no additional setup needed.
 
+# When to use bx-blue-green instead of cf-blue-green
+
+This project uses the bluemix command line directly allowing it to leverage some of the new features added to bluemix
+
+## Bluemix API key
+
+To generate your Bluemix API key follow these steps:
+
+![demo](docs/bluemix-api-key.gif)
+
+alternatively you can run 
+
+`bluemix iam api-key-create <key-name> -d <description> -f <output-file>`
+
+Once the key is created, you may create an environment variable with the key `BLUEMIX_API_KEY` and when running `bx login` it will check for that variable first and if it exists, it will log you in.
+
 ## Usage
 
 1. [Install the `bx` CLI](https://github.com/cloudfoundry/cli/releases) **v6.12.4+**.
@@ -29,18 +45,19 @@ Travis supports [continuous deployment](http://docs.travis-ci.com/user/deploymen
 
 Set up continuous deployment with the following settings in your `.travis.yml` file:
 
+To add an encrypted Bluemix API key use `travis encrypt BLUEMIX_API_KEY=<api-key> --add`
+
 ```yml
 sudo: true
 env:
   global:
   - BX_APP=[app name]
   - BX_API=[API endpoint]
-  - BX_USERNAME=[user]
   - BX_ORGANIZATION=[organization]
   - BX_SPACE=[space]
   - BX_SLEEP=[# seconds to wait before swapping BLUE with GREEN]
   - secure: [BLUEMIX_API_KEY=[encrypted with Travis](http://docs.travis-ci.com/user/environment-variables/#Encrypted-Variables)]
-before_deploy: npm install -g bx-blue-green
+before_deploy: npm install -g https://github.com/andresfvilla/bx-blue-green
 deploy:
   provider: script
   script: bx-blue-green-travis
