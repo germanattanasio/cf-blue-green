@@ -17,6 +17,7 @@ fi
 
 BLUE=$1
 GREEN="${BLUE}-B"
+B_DOMAIN=$2
 
 
 finally ()
@@ -41,6 +42,7 @@ trap on_fail ERR
 
 #Domain does not 
 DOMAIN=${B_DOMAIN:-"mybluemix.net"}
+echo "domain set to: ${B_DOMAIN}"
 
 # create the GREEN application
 bx cf push $GREEN -f $MANIFEST -n $GREEN
