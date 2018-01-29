@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# Blue-green deployment script. Usage:
+#
+#   ./bx-blue-green <appname>
+
+set -e
+set -o pipefail
+set -x
+
+
+if [ $# -ne 1 ]; then
+	echo "Usage:\n\n\t./bx-blue-green <appname>\n"
+	exit 1
+fi
+
+
+BLUE=$1
+GREEN="${BLUE}-B"
+B_DOMAIN=$2
+
+
+finally ()
+{
+  # we don't want to keep the sensitive information around
+  rm $MANIFEST
+}
+
+on_fail () {
+  finally
+  echo "DEPLOY FAILED - you may need to check 'bx cf apps' and 'bx cf routes' and do manual cleanup"
+}
+
+
+# pull the up-to-date manifest from the BLUE (existing) application
+MANIFEST=$(mktemp -t "${BLUE}_manifest.XXXXXXXXXX")
+bx cf create-app-manifest $BLUE -p $MANIFEST
+
+# set up try/catch
+# http://stackoverflow.com/a/185900/358804
+trap on_fail ERR
+
+#Domain does not 
+DOMAIN=${B_DOMAIN:-"mybluemix.net"}
+echo "domain set to: ${B_DOMAIN}"
+
+# create the GREEN application
+bx cf push $GREEN -f $MANIFEST -n $GREEN
+
+# wait for the apps to start
+sleep ${BX_SLEEP:-5} # Waits 5 seconds.
+
+# ensure it starts
+curl --fail -I "https://${GREEN}.${DOMAIN}"
+
+# add the GREEN application to each BLUE route to be load-balanced
+# TODO this output parsing seems a bit fragile...find a way to use more structured output
+bx cf routes | tail -n +4 | grep $BLUE | awk '{print $3" -n "$2}' | xargs -n 3 bx cf map-route $GREEN
+
+# cleanup
+# TODO consider 'stop'-ing the BLUE instead of deleting it, so that depedencies are cached for next time
+bx cf delete $BLUE -f
+bx cf rename $GREEN $BLUE
+bx cf delete-route $DOMAIN -n $GREEN -f
+finally
+
+echo "DONE"
