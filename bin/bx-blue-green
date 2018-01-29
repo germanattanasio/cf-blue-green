@@ -17,6 +17,7 @@ fi
 
 BLUE=$1
 GREEN="${BLUE}-B"
+B_DOMAIN=$2
 
 
 finally ()
