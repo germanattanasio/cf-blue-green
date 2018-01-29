@@ -9,8 +9,8 @@ set -o pipefail
 set -x
 
 
-if [ $# -ne 1 ]; then
-	echo "Usage:\n\n\t./bx-blue-green <appname>\n"
+if [ $# -eq 0 ]; then
+	echo "Usage:\n\n\t./bx-blue-green <appname> <domain>(optional)\n"
 	exit 1
 fi
 
@@ -42,7 +42,7 @@ trap on_fail ERR
 
 #Domain does not 
 DOMAIN=${B_DOMAIN:-"mybluemix.net"}
-echo "domain set to: ${B_DOMAIN}"
+echo "domain set to: ${DOMAIN}"
 
 # create the GREEN application
 bx cf push $GREEN -f $MANIFEST -n $GREEN
