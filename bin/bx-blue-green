@@ -10,7 +10,7 @@ set -x
 
 
 if [ $# -eq 0 ]; then
-	echo "Usage:\n\n\t./bx-blue-green <appname> <domain>(optional)\n"
+	echo "Usage:\n\n\t./bx-blue-green <appname> <domain(optional)> <Ignore default route(optional)>\n"
 	exit 1
 fi
 
@@ -18,6 +18,7 @@ fi
 BLUE=$1
 GREEN="${BLUE}-B"
 B_DOMAIN=$2
+BX_IGNORE_DEFAULT_ROUTES=$3
 
 
 finally ()
@@ -44,8 +45,12 @@ trap on_fail ERR
 DOMAIN=${B_DOMAIN:-"mybluemix.net"}
 echo "domain set to: ${DOMAIN}"
 
-# create the GREEN application
-bx cf push $GREEN -f $MANIFEST -n $GREEN
+#Cloudfoundry pushes to default unless otherwise specified
+if [ -z "$BX_IGNORE_DEFAULT_ROUTES" ]; then
+  bx cf push $GREEN -f $MANIFEST -n $GREEN
+else
+  bx cf push $GREEN -f $MANIFEST -n $GREEN -d $DOMAIN
+fi
 
 # wait for the apps to start
 sleep ${BX_SLEEP:-5} # Waits 5 seconds.
