@@ -22,6 +22,6 @@ pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd`
 popd > /dev/null
 
-$SCRIPTPATH/bx-blue-green $BX_APP $B_DOMAIN
+$SCRIPTPATH/bx-blue-green $BX_APP $B_DOMAIN $BX_IGNORE_DEFAULT_ROUTE
 
 bx logout
