@@ -2,7 +2,7 @@
 
 # Blue-green deployment script. Usage:
 #
-#   ./bx-blue-green <appname>
+# ./bx-blue-green <appname> <domain(optional)> <Ignore default route(optional)>
 
 set -e
 set -o pipefail
@@ -41,11 +41,11 @@ bx cf create-app-manifest $BLUE -p $MANIFEST
 # http://stackoverflow.com/a/185900/358804
 trap on_fail ERR
 
-#Domain does not 
+# Domain does not 
 DOMAIN=${B_DOMAIN:-"mybluemix.net"}
 echo "domain set to: ${DOMAIN}"
 
-#Cloudfoundry pushes to default unless otherwise specified
+# Cloudfoundry pushes to default unless otherwise specified
 if [ -z "$BX_IGNORE_DEFAULT_ROUTES" ]; then
   bx cf push $GREEN -f $MANIFEST -n $GREEN
 else
@@ -58,9 +58,21 @@ sleep ${BX_SLEEP:-5} # Waits 5 seconds.
 # ensure it starts
 curl --fail -I "https://${GREEN}.${DOMAIN}"
 
-# add the GREEN application to each BLUE route to be load-balanced
-# TODO this output parsing seems a bit fragile...find a way to use more structured output
-bx cf routes | tail -n +4 | grep $BLUE | awk '{print $3" -n "$2}' | xargs -n 3 bx cf map-route $GREEN
+# Grabs the route from the manifest and pulls out the hostname along with the route
+HOSTNAMES=$(cat $MANIFEST | grep '  - route:' |  cut -d' '  -f 5- |cut -d'.' -f 1 )
+DOMAINS=$(cat $MANIFEST | grep "  - route:" |  cut -d' '  -f 5- |cut -d'.' -f 2- )
+
+# Convert variables into a proper array
+HOSTNAMES=($HOSTNAMES)
+DOMAINS=($DOMAINS)
+
+#Iterate over them and use index value to pull respective Domain value
+for i in "${!HOSTNAMES[@]}"
+do
+  echo mapping Domain: ${DOMAINS[i]} Hostname:${HOSTNAMES[i]}
+  bx cf map-route $GREEN ${DOMAINS[i]} --hostname ${HOSTNAMES[i]}
+done
+
 
 # cleanup
 # TODO consider 'stop'-ing the BLUE instead of deleting it, so that depedencies are cached for next time
