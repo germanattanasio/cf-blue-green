@@ -1,6 +1,6 @@
 {
   "name": "bx-blue-green",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "zero-downtime deployment for Cloud Foundry based applications on bluemix",
   "repository": {
     "type": "git",
@@ -14,7 +14,7 @@
     "zero-downtime",
     "deploy"
   ],
-  "author": "Andres Villa <andres.villa@ibm.com",
+  "author": "Andres Villa <andresfvilla88@gmail.com>",
   "license": "CC0-1.0",
   "bugs": {
     "url": "https://github.com/andresfvilla/bx-blue-green/issues"
