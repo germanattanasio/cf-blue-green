@@ -17,8 +17,30 @@ fi
 
 BLUE=$1
 GREEN="${BLUE}-B"
-B_DOMAIN=$2
-BX_IGNORE_DEFAULT_ROUTES=$3
+
+while [[ $# -gt 1 ]]
+do
+key="$1"
+
+case $key in
+    --domain)
+    B_DOMAIN="$2"
+    shift # past argument
+    ;;
+    --path)
+    BX_PATH="-p $2"
+    shift # past argument
+    ;;
+    --ignore-route)
+    BX_IGNORE_DEFAULT_ROUTES="-d $2"
+    shift # past argument
+    ;;
+    *)
+            # unknown option
+    ;;
+esac
+shift # past argument or value
+done
 
 
 finally ()
@@ -46,11 +68,7 @@ DOMAIN=${B_DOMAIN:-"mybluemix.net"}
 echo "domain set to: ${DOMAIN}"
 
 # Cloudfoundry pushes to default unless otherwise specified
-if [ -z "$BX_IGNORE_DEFAULT_ROUTES" ]; then
-  bx cf push $GREEN -f $MANIFEST -n $GREEN
-else
-  bx cf push $GREEN -f $MANIFEST -n $GREEN -d $DOMAIN
-fi
+bx cf push $GREEN -f $MANIFEST -n $GREEN $DOMAIN $BX_PATH
 
 # wait for the apps to start
 sleep ${BX_SLEEP:-5} # Waits 5 seconds.
