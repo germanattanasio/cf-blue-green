@@ -1,0 +1,102 @@
+#!/bin/bash
+
+# Blue-green deployment script. Usage:
+#
+# ./bx-blue-green <appname> <domain(optional)> <Ignore default route(optional)>
+
+set -e
+set -o pipefail
+set -x
+
+
+if [ $# -eq 0 ]; then
+	echo "Usage:\n\n\t./bx-blue-green <appname> <domain(optional)> <Ignore default route(optional)>\n"
+	exit 1
+fi
+
+
+BLUE=$1
+GREEN="${BLUE}-B"
+
+while [[ $# -gt 1 ]]
+do
+key="$1"
+
+case $key in
+    --domain)
+    B_DOMAIN="$2"
+    shift # past argument
+    ;;
+    --path)
+    BX_PATH="-p $2"
+    shift # past argument
+    ;;
+    --ignore-route)
+    BX_IGNORE_DEFAULT_ROUTES="-d $2"
+    shift # past argument
+    ;;
+    *)
+            # unknown option
+    ;;
+esac
+shift # past argument or value
+done
+
+
+finally ()
+{
+  # we don't want to keep the sensitive information around
+  rm $MANIFEST
+}
+
+on_fail () {
+  finally
+  echo "DEPLOY FAILED - you may need to check 'bx cf apps' and 'bx cf routes' and do manual cleanup"
+}
+
+
+# pull the up-to-date manifest from the BLUE (existing) application
+MANIFEST=$(mktemp -t "${BLUE}_manifest.XXXXXXXXXX")
+bx cf create-app-manifest $BLUE -p $MANIFEST
+
+# set up try/catch
+# http://stackoverflow.com/a/185900/358804
+trap on_fail ERR
+
+# Domain does not 
+DOMAIN=${B_DOMAIN:-"mybluemix.net"}
+echo "domain set to: ${DOMAIN}"
+
+# Cloudfoundry pushes to default unless otherwise specified
+bx cf push $GREEN -f $MANIFEST -n $GREEN $DOMAIN $BX_PATH
+
+# wait for the apps to start
+sleep ${BX_SLEEP:-5} # Waits 5 seconds.
+
+# ensure it starts
+curl --fail -I "https://${GREEN}.${DOMAIN}"
+
+# Grabs the route from the manifest and pulls out the hostname along with the route
+HOSTNAMES=$(cat $MANIFEST | grep '  - route:' |  cut -d' '  -f 5- |cut -d'.' -f 1 )
+DOMAINS=$(cat $MANIFEST | grep "  - route:" |  cut -d' '  -f 5- |cut -d'.' -f 2- )
+
+# Convert variables into a proper array
+HOSTNAMES=($HOSTNAMES)
+DOMAINS=($DOMAINS)
+
+#Iterate over them and use index value to pull respective Domain value
+for i in "${!HOSTNAMES[@]}"
+do
+  echo mapping Domain: ${DOMAINS[i]} Hostname:${HOSTNAMES[i]}
+  bx cf map-route $GREEN ${DOMAINS[i]} --hostname ${HOSTNAMES[i]}
+done
+
+
+# cleanup
+# TODO consider 'stop'-ing the BLUE instead of deleting it, so that depedencies are cached for next time
+bx cf delete $BLUE -f
+bx cf rename $GREEN $BLUE
+bx cf delete-route $DOMAIN -n $GREEN -f
+finally
+
+echo "DONE"
